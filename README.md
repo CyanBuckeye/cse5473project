@@ -15,11 +15,16 @@ Program Flow
 
 
 Message types
+
 1: join match (desired username)
+
 2: send message to other player (destination username, message)
+
 3: possess user (username)
+
 4: accuse daemon (username) 
-5. vote on daemon accusations
+
+5: vote on daemon accusations
 
 
 Server responsibilities
