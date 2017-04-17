@@ -1,5 +1,6 @@
 package com.project.cse5473.mafia;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,13 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 public class HomeActivity extends AppCompatActivity {
-
-    EditText messageInputBox;
-    TextView receivedMessagesText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,28 +23,18 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        messageInputBox = (EditText) findViewById(R.id.msg_input);
-        receivedMessagesText = (TextView) findViewById(R.id.received_msgs);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
-    // Send the message the user entered
-    public void sendMessage(View v){
-        // for now, just append to received messages
-        String input = messageInputBox.getText().toString();
-        messageInputBox.setText("");
+    // go to host game activity
+    public void hostGame(View v){
+        Intent intent = new Intent(this, HostGameActivity.class);
+        startActivity(intent);
+    }
 
-        receivedMessagesText.append("\n"+input);
-
+    // goes to join game activity
+    public void joinGame(View v){
+        Intent intent = new Intent(this, JoinGameActivity.class);
+        startActivity(intent);
     }
 
     @Override
