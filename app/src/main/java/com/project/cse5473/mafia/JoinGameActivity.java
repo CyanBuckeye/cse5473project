@@ -1,15 +1,25 @@
 package com.project.cse5473.mafia;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 public class JoinGameActivity extends AppCompatActivity {
+
+    DataOutputStream socketWrite = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +40,39 @@ public class JoinGameActivity extends AppCompatActivity {
             return;
         }
 
-        // set up socket connection
-        createClientSocket(hostIP);
+        // setup socket
+        Socket s = setupSocket(hostIP);
+        try {
+            socketWrite = new DataOutputStream(s.getOutputStream());
+        } catch(IOException e) {
+            Log.d("Client Socket", e.toString());
+        }
 
         // join game
         sendJoinMessage(username);
     }
 
-    // create client side socket connection
-    public void createClientSocket(String ipAddress) {
-
-    }
 
     // send join message to host
     public void sendJoinMessage(String username) {
+        if (socketWrite != null) {
+            try {
+                socketWrite.writeUTF(username);
+                socketWrite.flush();
+            } catch (IOException e) {
+                Log.d("Client Socket", e.toString());
+            }
+        }
+    }
 
+    // create socket conencted to host
+    public Socket setupSocket(String ipAddress) {
+        Socket sock = null;
+        try {
+            sock = new Socket(ipAddress, 5473);
+        } catch (IOException e) {
+            Log.d("ClientSocket", e.toString());
+        }
+        return sock;
     }
 }

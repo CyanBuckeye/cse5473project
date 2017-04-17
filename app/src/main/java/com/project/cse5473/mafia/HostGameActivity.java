@@ -1,5 +1,7 @@
 package com.project.cse5473.mafia;
 
+import android.app.Activity;
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -16,8 +18,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -26,7 +36,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HostGameActivity extends AppCompatActivity {
+    static String TAG = "HostGameActivity";
 
+    // socket connection
+    ServerSocket ss;
+    boolean matchOpen = true;
+
+    // layout references
     TextView ipDisplay;
     TextView joinedPlayersDisplay;
     EditText usernameInput;
@@ -54,6 +70,9 @@ public class HostGameActivity extends AppCompatActivity {
         // set up ip address display
         String ipAddress = wifiIpAddress(this);
         ipDisplay.setText("IP Address: " + ipAddress);
+
+        // set up server socket
+        this.startService(new Intent(this, ServerSocketService.class));
     }
 
     // taken from http://stackoverflow.com/questions/16730711/get-my-wifi-ip-address-android
@@ -102,7 +121,7 @@ public class HostGameActivity extends AppCompatActivity {
 
     // goes to join game activity
     public void beginGame(View v){
-
+        matchOpen = false;
     }
 
     // updates display of joined players
@@ -114,8 +133,40 @@ public class HostGameActivity extends AppCompatActivity {
             text += players.get(i);
             text += ", ";
         }
-        text = text.substring(0, text.length() - 2);
+        if (players.size() > 0) {
+            text = text.substring(0, text.length() - 2);
+        }
 
         joinedPlayersDisplay.setText(text);
+    }
+
+    // modified http://stackoverflow.com/a/35745834
+    public class ServerSocketService extends IntentService {
+        public ServerSocketService() {
+            super("ServerSocketService");
+        }
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            final int port = 5473;
+            ServerSocket listener = null;
+            try {
+                Log.d("ServerSocket", "creating socket");
+                listener = new ServerSocket(port);
+                while (true) {
+                    Log.d("ServerSocket", "waiting for client");
+                    Socket socket = listener.accept();
+                    Log.d("ServerSocket", String.format("client connected from: %s", socket.getRemoteSocketAddress().toString()));
+                    DataInputStream dataRead =  new DataInputStream(socket.getInputStream());
+
+                    while (matchOpen) {
+                        String username = dataRead.readUTF();
+                        Log.d("ServerSocket", username);
+                        Toast.makeText(HostGameActivity.this, username, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } catch(IOException e) {
+                Log.d("ServerSocket", e.toString());
+            }
+        }
     }
 }
