@@ -7,6 +7,25 @@ Created on Mon Apr 17 20:45:48 2017
 
 import BaseHTTPServer
 import json
+import urlparse
+
+messages = []
+users = []
+user_last_msg_idxs = {}
+
+def handle_message(json):
+    print(json)
+    messages.append(json)
+    if json['action'] == 'join':
+        username = json['username']
+        print('Joining ' + username)
+        users.append(username)
+        user_last_msg_idxs[username] = -1
+        print(users)
+    elif json['action'] == 'guess':
+        print('guess')
+    else:
+        print('no action found in request')
 
 class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def _set_header(self):
@@ -16,9 +35,27 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         
     def do_GET(self):
         self._set_header()
-        msg = {'name':'Tom', 'msg':'hello-world'}
-        msg = json.dumps(msg)
+        
+        # get username from request
+        query = urlparse(self.path).query
+        params = dict(qc.split("=") for qc in query.split("&"))
+        user = params['username']
+        
+        # send only messages >= user_last_msg_idxs[user]
+        last_sent = user_last_msg_idxs[user]
+        # TODO!!    
+        msg = json.dumps(json_list)
         self.wfile.write(msg)
+        
+        # update user_last_msg_idxs[user] = len(messages)
+        user_last_msg_idxs[user] = len(messages)
+        
+    def do_POST(self):
+        self._set_header()
+        json_str = self.rfile.read(int(self.headers['Content-Length']))
+        data = json.loads(json_str)
+        handle_message(data)
+        
         
 if __name__ == '__main__':
     httpServerAddress = ('', 8000)
