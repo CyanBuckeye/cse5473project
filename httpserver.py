@@ -7,6 +7,7 @@ Created on Mon Apr 17 20:45:48 2017
 
 import BaseHTTPServer
 import json
+import urlparse
 
 messages = []
 users = []
@@ -36,18 +37,18 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self._set_header()
         
         # get username from request
-        
+        query = urlparse(self.path).query
+        params = dict(qc.split("=") for qc in query.split("&"))
+        user = params['username']
         
         # send only messages >= user_last_msg_idxs[user]
-        msg = {'name':'Tom', 'msg':'hello-world'}
-        msg = json.dumps(msg)
+        last_sent = user_last_msg_idxs[user]
+        # TODO!!    
+        msg = json.dumps(json_list)
         self.wfile.write(msg)
         
         # update user_last_msg_idxs[user] = len(messages)
-        
-        
-        
-       
+        user_last_msg_idxs[user] = len(messages)
         
     def do_POST(self):
         self._set_header()
