@@ -11,7 +11,11 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.ExecutionException;
+
 public class JoinGameActivity extends AppCompatActivity {
+
+    String username = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,23 +27,11 @@ public class JoinGameActivity extends AppCompatActivity {
     }
 
     // attempt to join the game
-    public void joinGameSockets(View v) {
-        // get username and ip address
-        String hostIP = ((EditText) findViewById(R.id.host_ip_input)).getText().toString();
-        String username = ((EditText) findViewById(R.id.username_input)).getText().toString();
-        if (username.length() < 3) {
-            Toast.makeText(this, "Username must be at least 3 characters", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // setup socket
-        SocketSendTask sockSendTask = new SocketSendTask();
-        sockSendTask.execute(hostIP, "join", username);
-    }
-
-    // attempt to join the game
     public void joinGame(View v) {
-        String username = ((EditText) findViewById(R.id.username_input)).getText().toString();
+        // get inputted username
+        username = ((EditText) findViewById(R.id.username_input)).getText().toString();
+
+        // set up http post request
         String method = "POST";
         JSONObject json = new JSONObject();
         try{
@@ -48,14 +40,33 @@ public class JoinGameActivity extends AppCompatActivity {
         } catch(JSONException je) {
             Log.d("JSON ERROR", je.toString());
         }
-
         String s = json.toString();
         HttpRequestTask tsk = new HttpRequestTask();
         try {
             JSONObject o = tsk.execute(s, method).get();//o.get("name")
-            //o is the jsonobject we get from HttpRequest. If you want to access its element, use o.get("element")
-            String temp = "123456";//just for debug. Meaningless.
-        } catch (Exception e) {
+
+            // start listening for updates
+            //startPolling();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }  catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // continuously call poll
+    private void startPolling(){
+        // will need to use AlarmManager, Timer,
+    }
+
+    // poll the http server
+    private void poll() {
+        HttpRequestTask pollTask = new HttpRequestTask();
+        try {
+            JSONObject o = pollTask.execute(username, "GET").get();//o.get("name")
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

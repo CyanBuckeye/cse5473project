@@ -29,20 +29,25 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
     @Override
     protected JSONObject doInBackground(String...pParams) {
         android.os.Debug.waitForDebugger();//for debug
-        String str = "http://10.0.2.2:8000";// the url of localhost
+        String urlStr = "http://10.0.2.2:8000";// the url of localhost
         try{
-            url = new URL(str);
-            con = (HttpURLConnection) url.openConnection();
             String method = pParams[1];
             int responseCode;
 
             switch (method.toLowerCase()) {
                 case "get":
+                    // add username to query string
+                    urlStr += "?username="+pParams[0];
+
+                    // create connection
+                    url = new URL(urlStr);
+                    con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod(method);
                     con.connect();
                     responseCode = con.getResponseCode();
                     if(responseCode != 200) throw new IOException("cannot connect to server");
 
+                    // read response
                     BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                     StringBuilder inputLine = new StringBuilder();
                     String line;
@@ -60,15 +65,19 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
                     }
                     return obj;
                 case "post":
+                    // setup connection
+                    url = new URL(urlStr);
+                    con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod(method);
                     String jsonStr = pParams[0];
 
+                    // write json to post body
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
                     writer.write(jsonStr);
                     writer.flush();
                     writer.close();
 
-
+                    // establish connection
                     con.connect();
                     responseCode = con.getResponseCode();
                     if(responseCode != 200) throw new IOException("cannot connect to server");

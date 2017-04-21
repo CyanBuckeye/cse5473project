@@ -10,13 +10,16 @@ import json
 
 messages = []
 users = []
+user_last_msg_idxs = {}
 
 def handle_message(json):
     print(json)
     messages.append(json)
     if json['action'] == 'join':
-        print('Joining ' + json['username'])
-        users.append(json['username'])
+        username = json['username']
+        print('Joining ' + username)
+        users.append(username)
+        user_last_msg_idxs[username] = -1
         print(users)
     elif json['action'] == 'guess':
         print('guess')
@@ -31,9 +34,20 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         
     def do_GET(self):
         self._set_header()
+        
+        # get username from request
+        
+        
+        # send only messages >= user_last_msg_idxs[user]
         msg = {'name':'Tom', 'msg':'hello-world'}
         msg = json.dumps(msg)
         self.wfile.write(msg)
+        
+        # update user_last_msg_idxs[user] = len(messages)
+        
+        
+        
+       
         
     def do_POST(self):
         self._set_header()
