@@ -7,6 +7,7 @@ Created on Mon Apr 17 11:41:44 2017
 
 import socketserver
 import json
+import copy 
 
 user_conns = {}
 
@@ -14,8 +15,16 @@ class serverHandler(socketserver.BaseRequestHandler):
     def handle(self):
         sock = self.request
         data = sock.recv(1024)
-        print(data)
-        sock.close()
+        jdata = json.loads(data)
+        
+        if (jdata['action'] == 'join'):
+            username = jdata['username']
+            user_conns[username] = self.request
+            for c in user_conns:
+                print(c + ": " + str(user_conns[c]))
+            print("")
+        else:
+            print(jdata)
         
 
 if __name__ == "__main__":

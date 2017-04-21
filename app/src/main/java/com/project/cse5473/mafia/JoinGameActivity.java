@@ -1,21 +1,12 @@
 package com.project.cse5473.mafia;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class JoinGameActivity extends AppCompatActivity {
 
@@ -40,6 +31,6 @@ public class JoinGameActivity extends AppCompatActivity {
 
         // setup socket
         SocketSendTask sockSendTask = new SocketSendTask();
-        sockSendTask.execute("join", hostIP, username);
+        sockSendTask.execute(hostIP, "join", username);
     }
 }
