@@ -16,28 +16,26 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:layout_marginTop="30dp"
-        android:text="Select a player to accuse: " />
+        android:text="Select a player to possess: " />
 
     <Spinner
-        android:id="@+id/spinner_1"
+        android:id="@+id/spinner_3"
         android:layout_width="match_parent"
         android:layout_height="100px"
-        android:entries="@array/players_array"
-        android:prompt="@string/accuse_prompt" />
+        android:entries="@array/players_array" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:layout_marginTop="30dp"
-        android:text="Vote on who the Daemon is: " />
+        android:text="Select a player to frame: " />
 
     <Spinner
-        android:id="@+id/spinner_2"
+        android:id="@+id/spinner_4"
         android:layout_width="match_parent"
         android:layout_height="100px"
-        android:entries="@array/players_array"
-        android:prompt="@string/accuse_prompt" />
+        android:entries="@array/players_array" />
 
     <TextView
         android:id="@+id/Win_Lose_Text"
@@ -53,6 +51,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Leave Game"
-        android:onClick="ExitMatch"
-        />
+        android:onClick="ExitMatch" />
 </LinearLayout>

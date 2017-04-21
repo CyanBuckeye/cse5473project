@@ -78,7 +78,7 @@ public class HostGameActivity extends AppCompatActivity {
     // taken from http://stackoverflow.com/questions/16730711/get-my-wifi-ip-address-android
     protected String wifiIpAddress(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
-        int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+        int ipAddress = wifiManager.getConnectionInfo().getIpAddress(); //CHECK THIS
 
         // Convert little-endian to big-endianif needed
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
@@ -121,6 +121,10 @@ public class HostGameActivity extends AppCompatActivity {
 
     // goes to join game activity
     public void beginGame(View v){
+        //Intent intent = new Intent(this, GameMatchActivity.class);
+        //intent.putExtra("players", playerDetails);
+        //startActivity(intent);
+        //Not sure what this does
         matchOpen = false;
     }
 

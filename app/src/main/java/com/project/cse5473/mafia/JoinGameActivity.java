@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import org.json.*;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
 
 public class JoinGameActivity extends AppCompatActivity {
 
-    DataOutputStream socketWrite = null;
+    //DataOutputStream socketWrite = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,47 +32,15 @@ public class JoinGameActivity extends AppCompatActivity {
 
     // attempt to join the game
     public void joinGame(View v) {
-        // get username and ip address
-        String hostIP = ((EditText) findViewById(R.id.host_ip_input)).getText().toString();
         String username = ((EditText) findViewById(R.id.username_input)).getText().toString();
-        if (username.length() < 3) {
-            Toast.makeText(this, "Username must be at least 3 characters", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // setup socket
-        Socket s = setupSocket(hostIP);
+        String method = "GET";
+        HttpRequestTask tsk = new HttpRequestTask();
         try {
-            socketWrite = new DataOutputStream(s.getOutputStream());
-        } catch(IOException e) {
-            Log.d("Client Socket", e.toString());
+            JSONObject o = tsk.execute(username, method).get();//o.get("name")
+            //o is the jsonobject we get from HttpRequest. If you want to access its element, use o.get("element")
+            String temp = "123456";//just for debug. Meaningless.
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        // join game
-        sendJoinMessage(username);
-    }
-
-
-    // send join message to host
-    public void sendJoinMessage(String username) {
-        if (socketWrite != null) {
-            try {
-                socketWrite.writeUTF(username);
-                socketWrite.flush();
-            } catch (IOException e) {
-                Log.d("Client Socket", e.toString());
-            }
-        }
-    }
-
-    // create socket conencted to host
-    public Socket setupSocket(String ipAddress) {
-        Socket sock = null;
-        try {
-            sock = new Socket(ipAddress, 5473);
-        } catch (IOException e) {
-            Log.d("ClientSocket", e.toString());
-        }
-        return sock;
     }
 }
