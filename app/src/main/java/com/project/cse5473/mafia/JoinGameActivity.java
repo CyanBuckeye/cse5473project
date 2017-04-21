@@ -19,8 +19,6 @@ import java.net.UnknownHostException;
 
 public class JoinGameActivity extends AppCompatActivity {
 
-    DataOutputStream socketWrite = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,38 +39,7 @@ public class JoinGameActivity extends AppCompatActivity {
         }
 
         // setup socket
-        Socket s = setupSocket(hostIP);
-        try {
-            socketWrite = new DataOutputStream(s.getOutputStream());
-        } catch(IOException e) {
-            Log.d("Client Socket", e.toString());
-        }
-
-        // join game
-        sendJoinMessage(username);
-    }
-
-
-    // send join message to host
-    public void sendJoinMessage(String username) {
-        if (socketWrite != null) {
-            try {
-                socketWrite.writeUTF(username);
-                socketWrite.flush();
-            } catch (IOException e) {
-                Log.d("Client Socket", e.toString());
-            }
-        }
-    }
-
-    // create socket conencted to host
-    public Socket setupSocket(String ipAddress) {
-        Socket sock = null;
-        try {
-            sock = new Socket(ipAddress, 5473);
-        } catch (IOException e) {
-            Log.d("ClientSocket", e.toString());
-        }
-        return sock;
+        SocketSendTask sockSendTask = new SocketSendTask();
+        sockSendTask.execute("join", hostIP, username);
     }
 }

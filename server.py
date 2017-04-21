@@ -5,20 +5,21 @@ Created on Mon Apr 17 11:41:44 2017
 @author: Administrator
 """
 
-import SocketServer
+import socketserver
 import json
 
-class serverHandler(SocketServer.BaseRequestHandler):
+user_conns = {}
+
+class serverHandler(socketserver.BaseRequestHandler):
     def handle(self):
         sock = self.request
-        send_msg = {'name':'tom', 'msg':'hello'}
-        dump_msg = json.dumps(send_msg)
-        sock.send(str.encode(dump_msg))
+        data = sock.recv(1024)
+        print(data)
         sock.close()
         
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 9999
-    server = SocketServer.TCPServer((HOST, PORT), serverHandler)
+    server = socketserver.TCPServer((HOST, PORT), serverHandler, True)
     server.serve_forever()
     
