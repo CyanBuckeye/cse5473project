@@ -33,31 +33,30 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     msgQueue = {} # message queue
     demon = []
     voteList = {} #vote record
-    numRequired = 4 #how many players are required for a game
+    numRequired = 3 #how many players are required for a game
     demonNumber = 1
     killed = ""
-    threshold = 3 # when game ends
-    
+    threshold = 2 # when game ends
+
     def _set_header(self):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-    '''    
+    '''
     def do_GET(self):
         self._set_header()
         msg = {'name':'Tom', 'msg':'hello-world'}
         msg = json.dumps(msg)
         self.wfile.write(msg)
     '''
-    
+
     def do_POST(self):
         self._set_header()
         data = self.rfile.read(int(self.headers.getheader('Content-Length')))
         data = json.loads(data)#assume the input is json file
         tp = data['type']
-         
+
         if tp == 0:# query
-            print("query")
             player_name = str(data['msg'])
             if player_name in HttpRequestHandler.msgQueue.keys():#if player has latest information, get it
                 val = HttpRequestHandler.msgQueue[player_name]
@@ -73,14 +72,14 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.wfile.write(message(5, val, "lose").msgtoJSON())
             if val == 0:
                 self.wfile.write(message(HttpRequestHandler.state[player_name], val, HttpRequestHandler.players).msgtoJSON())
-            
+
         if tp == 1:#join game
             player_name = str(data['msg'])
             HttpRequestHandler.players.append(player_name)
             HttpRequestHandler.state[player_name] = 1 # state: join game and alive
             HttpRequestHandler.num += 1
             self.wfile.write(message(1, 0, 'received').msgtoJSON())
-            
+
             if HttpRequestHandler.num == HttpRequestHandler.numRequired: #if all of payers are ready, choose demon
                 for i in range(HttpRequestHandler.demonNumber):
                     randN = random.randint(0, len(HttpRequestHandler.players) - 1)
@@ -92,10 +91,10 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     HttpRequestHandler.state[HttpRequestHandler.players[i]] = 2 #update state of clients
                     HttpRequestHandler.voteList[HttpRequestHandler.players[i]] = 0
 
-        if tp == 2:# vote    
+        if tp == 2:# vote
             vote_name = data['msg']
             HttpRequestHandler.voteList[vote_name] += 1
-            HttpRequestHandler.num -= 1    
+            HttpRequestHandler.num -= 1
             self.wfile.write(message(1, 0, 'received').msgtoJSON())
             if HttpRequestHandler.num == 0:
                 killed = ""
@@ -127,10 +126,10 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                         HttpRequestHandler.killed = name
                         for i in range(len(HttpRequestHandler.players)):
                             HttpRequestHandler.voteList[HttpRequestHandler.players[i]] = 0
-                     
-                        
-                
+
+
+
 if __name__ == '__main__':
-    httpServerAddress = ('', 8000)
+    httpServerAddress = ('192.168.56.1', 8000)
     server = BaseHTTPServer.HTTPServer(httpServerAddress, HttpRequestHandler)
     server.serve_forever()

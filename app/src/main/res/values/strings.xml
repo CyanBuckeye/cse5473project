@@ -5,10 +5,9 @@
     <string name="title_activity_join_game">JoinGameActivity</string>
     <string name="accuse_prompt">Select a player to accuse as the Daemon</string>
     <string-array name="players_array">
-        <item>Player 1</item>
-        <item>Player 2</item>
-        <item>Player 3</item>
-        <item>Player 4</item>
+        <item>player1</item>
+        <item>player2</item>
+        <item>player3</item>
     </string-array>
     <string name="title_activity_game">GameActivity</string>
 
