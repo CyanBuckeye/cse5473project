@@ -1,33 +1,29 @@
 package com.project.cse5473.mafia;
 
 import android.os.AsyncTask;
-import android.util.Log;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.net.HttpURLConnection;
-import android.util.DebugUtils;
-import java.lang.Exception;
-import android.os.Debug;
-import org.json.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 //new class needed for HTTP request. Using asynctask class.
-class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second parameter stands for the HTTP request, such as GET or POST,
-    // the first one stands for the message you want to transfer to the server; the third one is type of returning value
+class HttpPollTask extends AsyncTask<String, Void, JSONObject>
 {
     URL url;
     HttpURLConnection con;
-    public HttpRequestTask() {
+    public HttpPollTask() {
         super();
     }
 
     @Override
-    protected JSONObject doInBackground(String...pParams) {
+    protected JSONObject doInBackground(String...pParams) { //[0]: ip address, [1]: json message
         try{
             // setup connection
             String urlStr = "http://" + pParams[0] + ":8000";// the url of localhost
