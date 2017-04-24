@@ -28,7 +28,6 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
 
     @Override
     protected JSONObject doInBackground(String...pParams) {
-        android.os.Debug.waitForDebugger();//for debug
         String urlStr = "http://10.0.2.2:8000";// the url of localhost
         try{
             String method = pParams[1];

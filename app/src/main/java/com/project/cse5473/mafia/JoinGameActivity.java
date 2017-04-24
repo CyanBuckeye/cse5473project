@@ -1,5 +1,6 @@
 package com.project.cse5473.mafia;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,25 +39,21 @@ public class JoinGameActivity extends AppCompatActivity {
             json.put("username", username);
             json.put("action", "join");
         } catch(JSONException je) {
-            Log.d("JSON ERROR", je.toString());
+            throw new RuntimeException(je);
         }
         String s = json.toString();
         HttpRequestTask tsk = new HttpRequestTask();
         try {
             JSONObject o = tsk.execute(s, method).get();//o.get("name")
 
-            // start listening for updates
-            //startPolling();
+            // launch game match
+            Intent intent = new Intent(this, GameMatchActivity.class);
+            startActivity(intent);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }  catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    // continuously call poll
-    private void startPolling(){
-        // will need to use AlarmManager, Timer,
     }
 
     // poll the http server

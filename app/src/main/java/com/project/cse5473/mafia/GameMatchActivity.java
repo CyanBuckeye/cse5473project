@@ -65,8 +65,8 @@ public class GameMatchActivity extends AppCompatActivity {
     int endgame_status; //[0] in-process, [1] players win, [2] daemon wins
     int daemon_id; //Int in ArrayList "users" representing the daemon
     int round = 0;
-    JSONObject player_properties = new JSONObject();
 
+    Player player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +74,14 @@ public class GameMatchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_match);
 
         //Need to create JSON object with properties cooresponding to ip address
-        player_properties.put("username", "Player1"); //From playerDetails
-        player_properties.put("ip_address", "127.0.0.15"); //From playerDetails
-        player_properties.put("id", 1); //Need to implement in place of users ArrayList CHANGE NEEDED
-        player_properties.put("role", "player"); //default will be changed for the daemon
-        player_properties.put("possessed", false); //default will be changeed depending on who daemon possesses each round
-        player_properties.put("killed", false); //Change players state when they get killed
-        player_properties.put("votes", 0);
-
+        player = new Player();
+        player.name = "P1";//From playerDetails
+        player.ip = "127.0.0.15"; //From playerDetails
+        player.id = 1;//Need to implement in place of users ArrayList CHANGE NEEDED
+        player.role = "player1";//default will be changed for the daemon
+        player.possessed = false;//default will be changeed depending on who daemon possesses each round
+        player.killed = false; //Change players state when they get killed
+        player.votes = 0;
 
         //SET_DAEMON
         daemon_id = SetDaemon();
@@ -91,7 +91,7 @@ public class GameMatchActivity extends AppCompatActivity {
         RoundDisplay = (TextView) findViewById(R.id.round_num);
 
         //Set daemon view
-        if(player_properties.get("role") == "daemon"){
+        if(player.role == "daemon"){
             //Create all layout widgets for the daemon
             setContentView(R.layout.activity_daemon);
             possess = (Spinner) findViewById(R.id.spinner_3);
@@ -136,7 +136,7 @@ public class GameMatchActivity extends AppCompatActivity {
         Random rand = new Random();
         int id = rand.nextInt(users.size()) + 1;
         //Set json "role" attribute as Daemon
-        player_properties.put("role", "daemon");
+        player.role = "daemon";
         //Daemon will have different view set with a "Possess" spinner
         //Clicking possess temporarily gives daemon the players key for the round
         //This is handled in onCreate()
@@ -183,7 +183,7 @@ public class GameMatchActivity extends AppCompatActivity {
         }
 
         //Daemon possesses a player
-        if(player_properties.get("role") == "daemon"){
+        if(player.role == "daemon"){
             possess = (Spinner)findViewById(R.id.spinner_3);
             possessed_player = possess.getSelectedItem().toString();
             set = true;
@@ -206,7 +206,7 @@ public class GameMatchActivity extends AppCompatActivity {
             //Depending on how encryption is done do something here
             frame.setEnabled(true);
             accussed1 = frame.getSelectedItem().toString();
-            if(player_properties.get("username") == users.get(accusser2)){
+            if(player.name == users.get(accusser2)){
                 accuse.setEnabled(true);
                 accussed2 = accuse.getSelectedItem().toString();
             }
@@ -214,17 +214,17 @@ public class GameMatchActivity extends AppCompatActivity {
         else if(possessed_player.equals(users.get(accusser2))){
             frame.setEnabled(true);
             accussed1 = frame.getSelectedItem().toString();
-            if(player_properties.get("username") == users.get(accusser1)){
+            if(player.name == users.get(accusser1)){
                 accuse.setEnabled(true);
                 accussed2 = accuse.getSelectedItem().toString();
             }
         }
         else{
-            if(player_properties.get("username") == users.get(accusser1)){
+            if(player.name == users.get(accusser1)){
                 accuse.setEnabled(true);
                 accussed1 = accuse.getSelectedItem().toString();
             }
-            if(player_properties.get("username") == users.get(accusser2)){
+            if(player.name == users.get(accusser2)){
                 accuse.setEnabled(true);
                 accussed2 = accuse.getSelectedItem().toString();
             }
@@ -256,12 +256,12 @@ public class GameMatchActivity extends AppCompatActivity {
         //If 1 set players win on view, daemon loses
         if(endgame_status == 1){
             EndDisplay = (TextView) findViewById(R.id.Win_Lose_Text);
-            if(player_properties.get("role") == "player"){
+            if(player.role == "player"){
                 EndDisplay.setText("YOU WIN!!!");
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
             }
-            else if(player_properties.get("role") == "daemon"){
+            else if(player.role == "daemon"){
                 EndDisplay.setText("YOU LOSE!!!");
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
@@ -270,12 +270,12 @@ public class GameMatchActivity extends AppCompatActivity {
         //If 2 set players lose on view, daemon wins
         else if(endgame_status == 2){
             EndDisplay = (TextView) findViewById(R.id.Win_Lose_Text);
-            if(player_properties.get("role") == "player"){
+            if(player.role == "player"){
                 EndDisplay.setText("YOU LOSE!!!");
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
             }
-            else if(player_properties.get("role") == "daemon"){
+            else if(player.role == "daemon"){
                 EndDisplay.setText("YOU WIN!!!");
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
