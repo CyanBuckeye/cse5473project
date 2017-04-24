@@ -55,6 +55,9 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         json_str = self.rfile.read(int(self.headers['Content-Length']))
         data = json.loads(json_str)
         handle_message(data)
+        self.wfile.write("{\"worked\": \"yes\"}")
+        
+        
         
         
 if __name__ == '__main__':
