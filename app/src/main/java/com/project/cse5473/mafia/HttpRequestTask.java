@@ -1,5 +1,6 @@
 package com.project.cse5473.mafia;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -17,13 +18,17 @@ import android.os.Debug;
 import org.json.*;
 
 //new class needed for HTTP request. Using asynctask class.
-class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second parameter stands for the HTTP request, such as GET or POST,
-    // the first one stands for the message you want to transfer to the server; the third one is type of returning value
+class HttpRequestTask extends AsyncTask<String, Void, JSONObject> //pParam[0] = ip address, pParam[1] = json string
 {
-    URL url;
-    HttpURLConnection con;
+    private Activity caller;
+
     public HttpRequestTask() {
         super();
+    }
+
+    // use to return data to calling class
+    public HttpRequestTask(Activity a) {
+        caller = a;
     }
 
     @Override
@@ -31,8 +36,8 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
         try{
             // setup connection
             String urlStr = "http://" + pParams[0] + ":8000";// the url of localhost
-            url = new URL(urlStr);
-            con = (HttpURLConnection) url.openConnection();
+            URL url = new URL(urlStr);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
 
             // write json to post
@@ -72,5 +77,12 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
     @Override
     protected void onPostExecute(JSONObject o) {
         super.onPostExecute(o);
+        if (caller != null) {
+            try{
+                ((GameActivity) caller).handleServerResponse(o);
+            } catch (ClassCastException e) {
+                Log.d("HttpRequestTask", e.toString());
+            }
+        }
     }
 }

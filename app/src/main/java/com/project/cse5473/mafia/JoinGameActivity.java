@@ -30,6 +30,9 @@ public class JoinGameActivity extends AppCompatActivity {
         // get inputted username
         String username = ((EditText) findViewById(R.id.username_input)).getText().toString();
         String ip = ((EditText) findViewById(R.id.ip_input)).getText().toString();
+        if (ip.isEmpty() || ip == null) { // shortcut so don't have to type it in every time
+            ip = "192.168.56.1";
+        }
 
         // set up http post request
         String method = "POST";
@@ -48,7 +51,6 @@ public class JoinGameActivity extends AppCompatActivity {
         // launch game match
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("username", username);
-        if (ip == "") ip = "10.0.2.2";
         intent.putExtra("dest_ip", ip);
         startActivity(intent);
     }
