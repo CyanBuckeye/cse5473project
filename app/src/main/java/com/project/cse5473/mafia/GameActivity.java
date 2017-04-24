@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.Set;
 
 public class GameActivity extends AppCompatActivity {
 
+    private Spinner spinner;
+    private Button submit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,13 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        addListenerOnSpinnerItemSelection();
+    }
+
+    public void addListenerOnSpinnerItemSelection() {
+        spinner = (Spinner) findViewById(R.id.vote_spinner);
+        spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
     }
 
 }

@@ -9,5 +9,34 @@
     tools:context="com.project.cse5473.mafia.GameActivity"
     tools:showIn="@layout/activity_game">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Round "
+        android:textSize="32dp"
+        android:textAlignment="center"
+        android:id="@+id/round_num" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/accuse_prompt"
+            android:textSize="18dp"
+            android:paddingBottom="30px"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/players_array"
+            android:paddingBottom="50px"
+            android:id="@+id/vote_spinner"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:id="@+id/vote_btn"/>
+
+
 
 </LinearLayout>
