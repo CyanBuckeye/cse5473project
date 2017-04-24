@@ -16,8 +16,6 @@ import java.util.concurrent.ExecutionException;
 
 public class JoinGameActivity extends AppCompatActivity {
 
-    String username = "";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,43 +28,28 @@ public class JoinGameActivity extends AppCompatActivity {
     // attempt to join the game
     public void joinGame(View v) {
         // get inputted username
-        username = ((EditText) findViewById(R.id.username_input)).getText().toString();
+        String username = ((EditText) findViewById(R.id.username_input)).getText().toString();
+        String ip = ((EditText) findViewById(R.id.ip_input)).getText().toString();
 
         // set up http post request
         String method = "POST";
         JSONObject json = new JSONObject();
         try{
-            json.put("username", username);
-            json.put("action", "join");
+            json.put("state", 1);
+            json.put("type", 1);
+            json.put("msg", username);
         } catch(JSONException je) {
             throw new RuntimeException(je);
         }
-        String s = json.toString();
+        String jsonStr = json.toString();
         HttpRequestTask tsk = new HttpRequestTask();
-       //try {
-            //JSONObject o = tsk.execute(s, method).get();//o.get("name")
+        tsk.execute(ip, jsonStr);
 
-            // launch game match
-            Intent intent = new Intent(this, GameActivity.class);
-            startActivity(intent);
-        /*
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }  catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        */
-    }
-
-    // poll the http server
-    private void poll() {
-        HttpRequestTask pollTask = new HttpRequestTask();
-        try {
-            JSONObject o = pollTask.execute(username, "GET").get();//o.get("name")
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        // launch game match
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("username", username);
+        if (ip == "") ip = "10.0.2.2";
+        intent.putExtra("dest_ip", ip);
+        startActivity(intent);
     }
 }

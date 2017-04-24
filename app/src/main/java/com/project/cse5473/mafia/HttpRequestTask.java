@@ -28,64 +28,42 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
 
     @Override
     protected JSONObject doInBackground(String...pParams) {
-        String urlStr = "http://10.0.2.2:8000";// the url of localhost
         try{
-            String method = pParams[1];
-            int responseCode;
+            // setup connection
+            String urlStr = "http://" + pParams[0] + ":8000";// the url of localhost
+            url = new URL(urlStr);
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
 
-            switch (method.toLowerCase()) {
-                case "get":
-                    // add username to query string
-                    urlStr += "?username="+pParams[0];
+            // write json to post
+            String jsonStr = pParams[1];
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
+            writer.write(jsonStr);
+            writer.flush();
+            writer.close();
 
-                    // create connection
-                    url = new URL(urlStr);
-                    con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod(method);
-                    con.connect();
-                    responseCode = con.getResponseCode();
-                    if(responseCode != 200) throw new IOException("cannot connect to server");
+            // establish connection and send
+            con.connect();
 
-                    // read response
-                    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                    StringBuilder inputLine = new StringBuilder();
-                    String line;
-                    while((line = in.readLine()) != null) {
-                        inputLine.append(line);
-                    }
-                    in.close();
-                    line = inputLine.toString();
-                    JSONObject obj;
-                    try{
-                        obj = new JSONObject(line);
-                    }
-                    catch (Exception e){
-                        throw new IOException(e);
-                    }
-                    return obj;
-                case "post":
-                    // setup connection
-                    url = new URL(urlStr);
-                    con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod(method);
-                    String jsonStr = pParams[0];
-
-                    // write json to post body
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
-                    writer.write(jsonStr);
-                    writer.flush();
-                    writer.close();
-
-                    // establish connection
-                    con.connect();
-                    responseCode = con.getResponseCode();
-                    if(responseCode != 200) throw new IOException("cannot connect to server");
-
-                    JSONObject j = new JSONObject();
-                    return j;
-                default:
-                    return null;
+            // receive response
+            int responseCode = con.getResponseCode();
+            if(responseCode != 200) throw new IOException("cannot connect to server");
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            StringBuilder inputLine = new StringBuilder();
+            String line;
+            while((line = in.readLine()) != null) {
+                inputLine.append(line);
             }
+            in.close();
+            line = inputLine.toString();
+            JSONObject obj;
+            try{
+                obj = new JSONObject(line);
+            }
+            catch (Exception e){
+                throw new IOException(e);
+            }
+            return obj;
         }catch (IOException e) {
             throw new RuntimeException(e);
         }

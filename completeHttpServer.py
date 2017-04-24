@@ -57,6 +57,7 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         tp = data['type']
          
         if tp == 0:# query
+            print("query")
             player_name = str(data['msg'])
             if player_name in HttpRequestHandler.msgQueue.keys():#if player has latest information, get it
                 val = HttpRequestHandler.msgQueue[player_name]
