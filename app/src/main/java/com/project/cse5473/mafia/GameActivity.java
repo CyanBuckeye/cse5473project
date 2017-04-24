@@ -42,7 +42,7 @@ public class GameActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-                            HttpPollTask pollTask = new HttpPollTask();
+                            HttpRequestTask pollTask = new HttpRequestTask();
                             pollTask.execute(ip, requestStr);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
@@ -53,7 +53,4 @@ public class GameActivity extends AppCompatActivity {
         };
         timer.schedule(doAsynchronousTask, 0, 200); //execute in every 200 ms
     }
-
-
-
 }
