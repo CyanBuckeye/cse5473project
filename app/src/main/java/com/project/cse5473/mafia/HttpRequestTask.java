@@ -81,7 +81,8 @@ class HttpRequestTask extends AsyncTask<String, String, JSONObject>//the second 
                     responseCode = con.getResponseCode();
                     if(responseCode != 200) throw new IOException("cannot connect to server");
 
-                    return null;
+                    JSONObject j = new JSONObject();
+                    return j;
                 default:
                     return null;
             }

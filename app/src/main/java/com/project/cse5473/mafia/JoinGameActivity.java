@@ -43,17 +43,19 @@ public class JoinGameActivity extends AppCompatActivity {
         }
         String s = json.toString();
         HttpRequestTask tsk = new HttpRequestTask();
-        try {
-            JSONObject o = tsk.execute(s, method).get();//o.get("name")
+       //try {
+            //JSONObject o = tsk.execute(s, method).get();//o.get("name")
 
             // launch game match
-            Intent intent = new Intent(this, GameMatchActivity.class);
+            Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
+        /*
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }  catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        */
     }
 
     // poll the http server
