@@ -19,6 +19,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +32,11 @@ public class GameActivity extends AppCompatActivity {
     private Spinner spinner;
     private Button submit;
     private Activity context;
+    private boolean started = false;
 
     String username, destIP;
+
+    TextView status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,8 @@ public class GameActivity extends AppCompatActivity {
         addListenerOnSpinnerItemSelection();
         addListenerOnButton();
         submit.setEnabled(false);
-        //Need to enable button (vote_butn.setEnabled = true) once server state equals 2
+
+        status = (TextView) findViewById(R.id.status);
 
         Bundle bundle = getIntent().getExtras();
         username = bundle.getString("username");
@@ -123,12 +128,20 @@ public class GameActivity extends AppCompatActivity {
             state = jsonObj.getInt("state");
             msg = jsonObj.getString("msg");
 
+            // get list of player names when type = 0
+            //JSONArray players = jsonObj.getJSONArray("msg");
+
             // joined the game, get list of player names
-            if (type == 0) {
+            if (type == 0 && started == false) { // prevent starting multiple times
                 JSONArray players = jsonObj.getJSONArray("msg");
                 if (players.length() == 3) {
+                    started = true;
                     gameStart();
                 }
+            } else if (state == 4) { // win
+                gameWin();
+            } else if (state == 5) { // lose
+                gameLose();
             }
 
             Log.d("GameActivity", s);
@@ -139,9 +152,15 @@ public class GameActivity extends AppCompatActivity {
 
     // called once all three players have joined
     private void gameStart() {
-        Log.d("GameActivity", "Everyone joined");
+        status.setText("Everyone joined!");
         submit.setEnabled(true);
     }
 
+    private void gameWin() {
+        status.setText("Win!");
+    }
 
+    private void gameLose() {
+        status.setText("Lose!");
+    }
 }

@@ -37,6 +37,11 @@
             android:text="Submit"
             android:id="@+id/vote_btn"/>
 
-
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:paddingBottom="30px"/>
 
 </LinearLayout>
