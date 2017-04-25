@@ -46,7 +46,24 @@ public class JoinGameActivity extends AppCompatActivity {
         }
         String jsonStr = json.toString();
         HttpRequestTask tsk = new HttpRequestTask();
-        tsk.execute(ip, jsonStr);
+        JSONObject o = new JSONObject();
+        try{
+            o = tsk.execute(ip, jsonStr).get();
+        } catch(InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException ee) {
+            throw new RuntimeException(ee);
+        }
+
+        try {
+            String resp = o.getString("msg");
+            if (!resp.equals("received")) {
+                Toast.makeText(this, "Error joining match, please try again.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch(JSONException e) {
+            throw new RuntimeException(e);
+        }
 
         // launch game match
         Intent intent = new Intent(this, GameActivity.class);

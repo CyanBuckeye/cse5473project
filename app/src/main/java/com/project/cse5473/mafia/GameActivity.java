@@ -33,6 +33,7 @@ public class GameActivity extends AppCompatActivity {
     private Button submit;
     private Activity context;
     private boolean started = false;
+    private boolean daemonSet = false;
     private Timer pollTimer;
     private String[] playerNames;
 
@@ -52,6 +53,7 @@ public class GameActivity extends AppCompatActivity {
         addListenerOnSpinnerItemSelection();
         addListenerOnButton();
         submit.setEnabled(false);
+        spinner.setEnabled(false);
 
         status = (TextView) findViewById(R.id.status);
         daemonText = (TextView) findViewById(R.id.daemon_text);
@@ -61,6 +63,7 @@ public class GameActivity extends AppCompatActivity {
         destIP  = bundle.getString("dest_ip");
 
         // start polling webserver
+        status.setText("Waiting for players...");
         startPolling();
     }
 
@@ -91,6 +94,8 @@ public class GameActivity extends AppCompatActivity {
                 String jsonStr = json.toString();
                 HttpRequestTask tsk = new HttpRequestTask();
                 tsk.execute(ip, jsonStr);
+                submit.setEnabled(false);
+                status.setText("Waiting for all votes...");
             }
 
         });
@@ -132,9 +137,6 @@ public class GameActivity extends AppCompatActivity {
             state = jsonObj.getInt("state");
             msg = jsonObj.getString("msg");
 
-            // get list of player names when type = 0
-            //JSONArray players = jsonObj.getJSONArray("msg");
-
             // joined the game, get list of player names
             if (type == 0 && started == false) { // prevent starting multiple times
                 JSONArray players = jsonObj.getJSONArray("msg");
@@ -143,7 +145,7 @@ public class GameActivity extends AppCompatActivity {
                     setPlayerNames(players);
                     gameStart();
                 }
-            } else if (state == 3) {
+            } else if (state == 3 && !daemonSet) {
                 becomeDaemon();
             }else if (state == 4) { // win
                 gameWin();
@@ -161,34 +163,43 @@ public class GameActivity extends AppCompatActivity {
     private void gameStart() {
         status.setText("Everyone joined!");
         submit.setEnabled(true);
+        spinner.setEnabled(true);
     }
 
     private void setPlayerNames(JSONArray names) {
         try{
-            playerNames = new String[]{names.getString(0), names.getString(1), names.getString(2)};
+            // get list of player names, remove your name from list
+            playerNames = new String[]{
+                    names.getString(0).equals(username) ? names.getString(2) : names.getString(0),
+                    names.getString(1).equals(username) ? names.getString(2) : names.getString(1)
+            };
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_spinner_item, playerNames);
             spinner.setAdapter(adapter);
         } catch(JSONException e) {
             throw new RuntimeException(e);
         }
-
     }
 
+    // show daemon a message
     private void becomeDaemon() {
         daemonText.setText("You're the daemon!");
+        daemonSet = true;
     }
 
+    // won the game
     private void gameWin() {
         status.setText("Win!");
         pollTimer.cancel();
     }
 
+    // lost the game
     private void gameLose() {
         status.setText("Lose!");
         pollTimer.cancel();
     }
 
+    // stop polling when not using apps, seemed to cause problems when timer kept going
     @Override
     protected void onPause() {
         super.onPause();
