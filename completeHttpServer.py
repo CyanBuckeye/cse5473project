@@ -63,6 +63,7 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 HttpRequestHandler.msgQueue.pop(player_name)
             else:
                 val = 0
+                
             #val == 0: no change; val == 1: you are chosen to be demon; val == 2: someone is killed; val == 4: success; val == 5: fail
             if val == 2:
                 self.wfile.write(message(HttpRequestHandler.state[player_name], val, HttpRequestHandler.killed).msgtoJSON())
@@ -87,9 +88,14 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                         randN = random.randint(0, len(HttpRequestHandler.players) - 1)
                     HttpRequestHandler.demon.append(HttpRequestHandler.players[randN])
                     #self.msgQueue[self.players[randN]] = 1
-                for i in range(len(HttpRequestHandler.players)):
-                    HttpRequestHandler.state[HttpRequestHandler.players[i]] = 2 #update state of clients
-                    HttpRequestHandler.voteList[HttpRequestHandler.players[i]] = 0
+                
+                #update state of clients
+                for player in HttpRequestHandler.players:
+                    if player in HttpRequestHandler.demon:
+                        HttpRequestHandler.state[player] = 3
+                    else:
+                        HttpRequestHandler.state[player] = 2
+                    HttpRequestHandler.voteList[player] = 0
 
         if tp == 2:# vote
             vote_name = data['msg']

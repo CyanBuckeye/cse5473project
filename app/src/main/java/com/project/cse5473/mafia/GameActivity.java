@@ -39,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
     String username, destIP;
 
     TextView status;
+    TextView daemonText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class GameActivity extends AppCompatActivity {
         submit.setEnabled(false);
 
         status = (TextView) findViewById(R.id.status);
+        daemonText = (TextView) findViewById(R.id.daemon_text);
 
         Bundle bundle = getIntent().getExtras();
         username = bundle.getString("username");
@@ -141,7 +143,9 @@ public class GameActivity extends AppCompatActivity {
                     setPlayerNames(players);
                     gameStart();
                 }
-            } else if (state == 4) { // win
+            } else if (state == 3) {
+                becomeDaemon();
+            }else if (state == 4) { // win
                 gameWin();
             } else if (state == 5) { // lose
                 gameLose();
@@ -171,6 +175,10 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+    private void becomeDaemon() {
+        daemonText.setText("You're the daemon!");
+    }
+
     private void gameWin() {
         status.setText("Win!");
         pollTimer.cancel();
@@ -178,6 +186,12 @@ public class GameActivity extends AppCompatActivity {
 
     private void gameLose() {
         status.setText("Lose!");
+        pollTimer.cancel();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         pollTimer.cancel();
     }
 }

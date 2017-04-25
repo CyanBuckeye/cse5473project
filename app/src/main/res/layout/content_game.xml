@@ -7,7 +7,8 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.project.cse5473.mafia.GameActivity"
-    tools:showIn="@layout/activity_game">
+    tools:showIn="@layout/activity_game"
+    android:padding="10dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -42,6 +43,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18dp"
+        android:paddingBottom="30px"/>
+
+    <TextView
+        android:id="@+id/daemon_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:textColor="#ff5858"
         android:paddingBottom="30px"/>
 
 </LinearLayout>
