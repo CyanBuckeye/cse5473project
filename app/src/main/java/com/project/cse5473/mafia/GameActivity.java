@@ -33,6 +33,7 @@ public class GameActivity extends AppCompatActivity {
     private Button submit;
     private Activity context;
     private boolean started = false;
+    private Timer pollTimer;
 
     String username, destIP;
 
@@ -95,7 +96,7 @@ public class GameActivity extends AppCompatActivity {
     // start polling the server for updates every 200ms
     private void startPolling() {
         final Handler handler = new Handler();
-        Timer timer = new Timer();
+        pollTimer = new Timer();
         final String requestStr = "{\"state\": 0, \"type\": 0, \"msg\": \"" + username + "\"}";
         final String ip = destIP;
         TimerTask doAsynchronousTask = new TimerTask() {
@@ -113,7 +114,7 @@ public class GameActivity extends AppCompatActivity {
                 });
             }
         };
-        timer.schedule(doAsynchronousTask, 0, 200);
+        pollTimer.schedule(doAsynchronousTask, 0, 200);
     }
 
     // handle the response from polling the server
@@ -158,9 +159,11 @@ public class GameActivity extends AppCompatActivity {
 
     private void gameWin() {
         status.setText("Win!");
+        pollTimer.cancel();
     }
 
     private void gameLose() {
         status.setText("Lose!");
+        pollTimer.cancel();
     }
 }
