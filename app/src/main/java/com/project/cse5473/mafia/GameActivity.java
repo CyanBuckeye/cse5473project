@@ -34,6 +34,7 @@ public class GameActivity extends AppCompatActivity {
     private Activity context;
     private boolean started = false;
     private Timer pollTimer;
+    private String[] playerNames;
 
     String username, destIP;
 
@@ -137,6 +138,7 @@ public class GameActivity extends AppCompatActivity {
                 JSONArray players = jsonObj.getJSONArray("msg");
                 if (players.length() == 3) {
                     started = true;
+                    setPlayerNames(players);
                     gameStart();
                 }
             } else if (state == 4) { // win
@@ -155,6 +157,18 @@ public class GameActivity extends AppCompatActivity {
     private void gameStart() {
         status.setText("Everyone joined!");
         submit.setEnabled(true);
+    }
+
+    private void setPlayerNames(JSONArray names) {
+        try{
+            playerNames = new String[]{names.getString(0), names.getString(1), names.getString(2)};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, playerNames);
+            spinner.setAdapter(adapter);
+        } catch(JSONException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void gameWin() {
