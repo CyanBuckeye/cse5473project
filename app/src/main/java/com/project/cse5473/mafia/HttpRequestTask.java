@@ -14,6 +14,8 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import android.util.DebugUtils;
 import java.lang.Exception;
+import java.security.GeneralSecurityException;
+
 import android.os.Debug;
 import org.json.*;
 
@@ -61,9 +63,21 @@ class HttpRequestTask extends AsyncTask<String, Void, JSONObject> //pParam[0] = 
             }
             in.close();
             line = inputLine.toString();
+
+            // decrypt line
+            String decrypted = "";
+            try {
+                Crypt c = new Crypt();
+                decrypted = c.decrypt_string(line);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
+
             JSONObject obj;
             try{
-                obj = new JSONObject(line);
+                obj = new JSONObject(decrypted);
             }
             catch (Exception e){
                 throw new IOException(e);

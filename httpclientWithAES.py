@@ -31,10 +31,10 @@ class AESCipher:
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         return self._unpad(cipher.decrypt(ciphertxt[AES.block_size:])).decode('utf-8')
 
-aesWrapper = AESCipher('my private key')
+aesWrapper = AESCipher('1234567890123456')
 
 def join(name):
-    conn = httplib.HTTPConnection('', 8000)
+    conn = httplib.HTTPConnection('192.168.56.1', 8000)
     data = {"type": 1, "msg":name}
     data = json.dumps(data)
     #conn.request("GET", "/")
@@ -50,7 +50,7 @@ def join(name):
     conn.close()
 
 def query(name):
-    conn = httplib.HTTPConnection('', 8000)
+    conn = httplib.HTTPConnection('192.168.56.1', 8000)
     data = {"type": 0, "msg":name}
     data = json.dumps(data)
     headers = {"Content-type": "application/json"}
@@ -66,7 +66,7 @@ def query(name):
     conn.close()
 
 def vote(name):
-    conn = httplib.HTTPConnection('', 8000)
+    conn = httplib.HTTPConnection('192.168.56.1', 8000)
     data = {"type": 2, "msg":name}
     data = json.dumps(data)
     headers = {"Content-type": "application/json"}
@@ -81,3 +81,4 @@ def vote(name):
     print(pk['state'], str(pk['msg']))
     conn.close()
 
+join('evan')

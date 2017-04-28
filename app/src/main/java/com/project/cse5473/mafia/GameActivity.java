@@ -21,6 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -92,8 +94,15 @@ public class GameActivity extends AppCompatActivity {
                 }
                 String ip = "192.168.56.1";
                 String jsonStr = json.toString();
+                String encrypted = "";
+                try{
+                    Crypt c = new Crypt();
+                    encrypted = c.encrypt_string(jsonStr);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 HttpRequestTask tsk = new HttpRequestTask();
-                tsk.execute(ip, jsonStr);
+                tsk.execute(ip, encrypted);
                 submit.setEnabled(false);
                 status.setText("Waiting for all votes...");
             }
@@ -106,15 +115,23 @@ public class GameActivity extends AppCompatActivity {
         final Handler handler = new Handler();
         pollTimer = new Timer();
         final String requestStr = "{\"state\": 0, \"type\": 0, \"msg\": \"" + username + "\"}";
+
         final String ip = destIP;
         TimerTask doAsynchronousTask = new TimerTask() {
             @Override
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
+                        String encrypted = "";
+                        try{
+                            Crypt c = new Crypt();
+                            encrypted = c.encrypt_string(requestStr);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                         try {
                             HttpRequestTask pollTask = new HttpRequestTask(context);
-                            pollTask.execute(ip, requestStr);
+                            pollTask.execute(ip, encrypted);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -152,7 +169,6 @@ public class GameActivity extends AppCompatActivity {
             } else if (state == 5) { // lose
                 gameLose();
             }
-
             Log.d("GameActivity", s);
         } catch(JSONException e) {
             throw new RuntimeException(e);

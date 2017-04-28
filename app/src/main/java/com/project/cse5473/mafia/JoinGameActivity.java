@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutionException;
 
 public class JoinGameActivity extends AppCompatActivity {
@@ -45,10 +46,20 @@ public class JoinGameActivity extends AppCompatActivity {
             throw new RuntimeException(je);
         }
         String jsonStr = json.toString();
+        String encrypted = "";
+        String decrypted= "";
+        try{
+            Crypt c = new Crypt();
+            encrypted = c.encrypt_string(jsonStr);
+            decrypted = c.decrypt_string(encrypted);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         HttpRequestTask tsk = new HttpRequestTask();
         JSONObject o = new JSONObject();
         try{
-            o = tsk.execute(ip, jsonStr).get();
+            o = tsk.execute(ip, encrypted).get();
         } catch(InterruptedException e) {
             throw new RuntimeException(e);
         } catch (ExecutionException ee) {
